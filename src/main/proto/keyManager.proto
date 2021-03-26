@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "br.com.zup";
+option java_outer_classname = "KeyManager";
+package br.com.zup;
+
+import "google/protobuf/timestamp.proto";
+
+service KeymanagerRegistraChavePixGrpcService {
+  rpc registrar (RegistraChavePixRequest) returns (RegistraChavePixResponse) {}
+}
+
+service KeymanagerRemoveChavePixGrpcService {
+  rpc remover (RemoveChavePixRequest) returns (RemoveChavePixResponse) {}
+}
+
+service KeymanagerConsultaChavePixGrpcService {
+  rpc consultar (ConsultaChavePixRequest) returns (ConsultaChavePixResponse) {}
+}
+
+service KeymanagerListaChavesPixGrpcService {
+  rpc listar (ListaChavesPixRequest) returns (ListaChavesPixResponse) {}
+}
+
+//REGISTRO
+enum TipoDeChave {
+  UNKNOWN_TIPO_DE_CHAVE = 0;
+  CPF = 1;
+  TELEFONE_CELULAR = 2;
+  EMAIL = 3;
+  CHAVE_ALEATORIA = 4;
+}
+
+enum TipoDeConta {
+  UNKNOWN_TIPO_DE_CONTA = 0;
+  CONTA_CORRENTE = 1;
+  CONTA_POUPANCA = 2;
+}
+
+message RegistraChavePixRequest {
+  string clienteId = 1;
+  TipoDeChave tipoDeChave = 2;
+  string chave = 3;
+  TipoDeConta tipoDeConta = 4;
+}
+
+message RegistraChavePixResponse {
+  string pixId = 1;
+  string clienteId = 2;
+}
+
+//REMOÇÃO
+message RemoveChavePixRequest {
+  string pixId = 1;
+  string clienteId = 2;
+}
+
+message RemoveChavePixResponse {
+  string pixId = 1;
+  string clienteId = 2;
+}
+
+//CONSULTA
+message ConsultaChavePixRequest {
+  message ConsultaPorClienteEPixId{
+    string clienteId = 2;
+    string pixId = 1;
+  }
+
+  oneof consulta {
+    ConsultaPorClienteEPixId pixIdEClienteId = 1;
+    string chave = 2;
+  }
+}
+
+message Titular {
+  string nome = 1;
+  string cpf = 2;
+}
+
+message Conta {
+  string instituicao = 1;
+  string agencia = 2;
+  string numero = 3;
+  TipoDeConta tipoDeConta = 4;
+  Titular titular = 5;
+}
+
+message ConsultaChavePixResponse {
+  string pixId = 1;
+  string clienteId = 2;
+  TipoDeChave tipoDeChave = 3;
+  string chave = 4;
+  Conta conta = 5;
+  google.protobuf.Timestamp registradaEm = 6;
+}
+
+//LISTAGEM
+message ListaChavesPixRequest {
+  string clienteId = 1;
+}
+
+message ListaChavesPixResponse {
+  string clienteId = 1;
+  repeated ChavePix chaves = 2;
+
+  message ChavePix {
+    string pixId = 1;
+    TipoDeChave tipoDaChave = 2;
+    string chave = 3;
+    TipoDeConta tipoDaConta = 4;
+    google.protobuf.Timestamp registradaEm = 5;
+  }
+}

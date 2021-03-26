@@ -1,0 +1,46 @@
+micronaut:
+  application:
+    name: keyManager
+
+
+datasources:
+  default:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:keymanager}
+    driverClassName: org.postgresql.Driver
+    username: ${DB_USERNAME:keymanager}
+    password: ${DB_PASSWORD:keymanager}
+    schema-generate: CREATE_DROP
+    dialect: POSTGRES
+
+
+jpa.default.properties.hibernate.hbm2ddl.auto: update
+jpa.default.properties.hibernate.show_sql: true
+jpa.default.properties.hibernate.format_sql: true
+
+
+grpc:
+  server:
+    port: ${PORT:50051}
+    keep-alive-time: 3h
+    max-inbound-message-size: 1024
+
+
+itau:
+  erp:
+    url: ${ITAU_ERP_URL:`http://localhost:9091`}
+
+
+bcb:
+  url: ${BCB_URL:`http://localhost:8082`}
+
+
+tracing:
+  jaeger:
+    enabled: ${JAEGER_ENABLED:true}
+    sampler:
+      probability: ${JAEGER_SAMPLE:1}
+    sender:
+      endpoint: ${JAEGER_ENDPOINT:`http://localhost:14268/api/traces`}
+    reporter:
+      flushInterval: 2000
+      maxQueueSize: 200
